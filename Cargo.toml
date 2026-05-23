@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["INFINI Labs <hello@infini.ltd>"]
 edition = "2021"
 license = "MIT"
-description = "ICU-based Unicode analysis for INFINI Pizza — tokenizer, normalizer, folding, collation"
+description = "ICU4X Unicode text analysis plugin for INFINI Pizza — segmentation, normalization, folding, collation"
 repository = "https://pizza.rs"
 keywords = ["pizza", "icu", "unicode", "tokenizer", "normalization"]
 
