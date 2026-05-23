@@ -1,0 +1,24 @@
+[package]
+name = "pizza-analysis-icu"
+version = "0.1.0"
+authors = ["INFINI Labs <hello@infini.ltd>"]
+edition = "2021"
+license = "MIT"
+description = "ICU-based Unicode analysis for INFINI Pizza — tokenizer, normalizer, folding, collation"
+repository = "https://pizza.rs"
+keywords = ["pizza", "icu", "unicode", "tokenizer", "normalization"]
+
+
+[features]
+default = []
+std = ["pizza-engine/std"]
+
+[dependencies]
+pizza-engine = { path = "../../lib/engine", default-features = false }
+icu_normalizer = "2"
+icu_segmenter = "2"
+icu_collator = "2"
+icu_casemap = "2"
+icu_locale_core = "2"
+
+[dev-dependencies]
