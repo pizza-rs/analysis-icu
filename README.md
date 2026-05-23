@@ -1,88 +1,79 @@
-# pizza-analysis-icu
+<div align="center">
 
-ICU-based Unicode text analysis for the [Pizza](https://pizza.rs) search engine. Provides Unicode-standard tokenization, normalization, case folding, and collation using the [ICU4X](https://github.com/unicode-org/icu4x) library.
+# 🌐 pizza-analysis-icu
+
+**ICU-based text analysis plugin for [INFINI Pizza](https://pizza.rs)**
+
+[![Crate](https://img.shields.io/badge/crate-pizza--analysis--icu-blue)](https://github.com/pizza-rs/analysis-icu)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+Provides Unicode-standard text analysis based on ICU algorithms, including
+UAX#29 word-break tokenization, Unicode normalization (NFC/NFD/NFKC/NFKD),
+case folding, and locale-aware collation. Essential for multilingual search
+where consistent Unicode handling is required.
 
 ## Components
 
-| Name | Type | Description |
-|------|------|-------------|
-| `icu_tokenizer` | Tokenizer | Unicode word segmentation following UAX#29 rules |
-| `icu_normalizer` | Token Filter | NFKC_Casefold normalization |
-| `icu_folding` | Token Filter | Unicode case folding (accent removal + lowercasing) |
-| `icu_collation` | Token Filter | Locale-aware sort key generation for proper ordering |
+| Type | Name | Description |
+|:-----|:-----|:------------|
+| Tokenizer | `icu_tokenizer` | UAX#29 word-break segmentation for all Unicode scripts |
+| TokenFilter | `icu_folding` | Unicode case folding + accent removal (NFKC_Casefold) |
+| TokenFilter | `icu_normalizer` | Configurable Unicode normalization (NFC/NFD/NFKC/NFKD/NFKC_Casefold) |
+| TokenFilter | `icu_collation` | Locale-aware sort key generation for collation-based sorting |
 
-## Usage
+### Normalization Modes
 
-### ICU Tokenizer
+| Mode | Description |
+|:-----|:------------|
+| `Nfc` | Canonical composition (NFC) |
+| `Nfd` | Canonical decomposition (NFD) |
+| `Nfkc` | Compatibility composition (NFKC) |
+| `Nfkd` | Compatibility decomposition (NFKD) |
+| `NfkcCasefold` | NFKC + Unicode case folding (default) |
 
-Segments text using Unicode UAX#29 word boundary rules. Handles complex scripts (Thai, Khmer, Lao, Myanmar, CJK) correctly without language-specific dictionaries.
+### Why ICU?
 
-```json
-{
-  "analyzer": {
-    "type": "custom",
-    "tokenizer": "icu_tokenizer",
-    "filter": ["icu_folding"]
-  }
-}
+- **UAX#29 tokenizer** correctly splits Thai, Lao, Khmer, Myanmar (no spaces between words)
+- **Folding** reduces diacritics (café → cafe) and fullwidth → ASCII (Ａ → A)
+- **Collation** handles locale-specific sort order (German: ä sorts with a; Swedish: ä sorts after z)
+
+## Example
+
+```rust
+use pizza_engine::analysis::Tokenizer;
+use pizza_analysis_icu::IcuTokenizer;
+
+let tk = IcuTokenizer::new();
+let tokens = tk.tokenize("สวัสดีครับ"); // Thai - no spaces
+// UAX#29 splits correctly: ["สวัสดี", "ครับ"]
 ```
 
-### ICU Folding
+## Installation
 
-Converts characters to their ASCII equivalents where possible, while removing diacritics and performing case folding. Based on Unicode's NFKC_Casefold with additional accent stripping.
-
-```json
-{
-  "analyzer": {
-    "type": "custom",
-    "tokenizer": "standard",
-    "filter": ["icu_folding"]
-  }
-}
+```toml
+[dependencies]
+pizza-analysis-icu = "0.1"
 ```
 
-**Example**: `Ménü` → `menu`, `Ⅷ` → `viii`
+Or via `pizza-analysis-all`:
 
-### ICU Normalizer
-
-Applies Unicode NFKC_Casefold normalization to tokens. This decomposes compatibility characters and applies case folding.
-
-```json
-{
-  "filter": ["icu_normalizer"]
-}
+```toml
+[dependencies]
+pizza-analysis-all = { version = "0.1", features = ["icu"] }
 ```
-
-**Example**: `ﬁ` → `fi`, `Ω` → `ω`
-
-### ICU Collation
-
-Generates binary sort keys for locale-aware ordering. Useful for case-insensitive, accent-insensitive sorting.
-
-```json
-{
-  "filter": ["icu_collation"]
-}
-```
-
-## When to Use
-
-- **Multi-language indexes** — `icu_tokenizer` handles all Unicode scripts via UAX#29
-- **Accent-insensitive search** — `icu_folding` strips diacritics while preserving base characters
-- **Complex scripts** — Thai, Khmer, Lao, Myanmar where whitespace doesn't separate words
-- **Locale-aware sorting** — `icu_collation` produces correct sort ordering per locale
-
-## Data Sources
-
-This crate uses [ICU4X](https://github.com/unicode-org/icu4x) v2, which embeds official Unicode CLDR/ICU data. No external data files are needed.
-
-## Dependencies
-
-- `icu_normalizer` 2.x — Unicode normalization
-- `icu_segmenter` 2.x — Word/sentence segmentation
-- `icu_collator` 2.x — Collation sort keys
-- `icu_casemap` 2.x — Case mapping/folding
 
 ## License
 
-Apache-2.0
+MIT
+
+---
+
+<div align="center">
+<sub>Part of the <a href="https://pizza.rs">INFINI Pizza</a> ecosystem</sub>
+</div>
