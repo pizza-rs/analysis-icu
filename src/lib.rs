@@ -17,13 +17,11 @@ mod normalizer;
 mod normalization_filter;
 mod folding;
 mod collation;
-mod transform;
 
 pub use tokenizer::IcuTokenizer;
 pub use normalizer::{IcuNormalizer, IcuNormMode};
 pub use normalization_filter::{IcuNormalizationFilter, IcuNormFilterMode};
 pub use folding::IcuFoldingFilter;
 pub use collation::IcuCollationFilter;
-pub use transform::{IcuTransformFilter, IcuTransformId};
 pub mod register;
 pub use register::register_all;

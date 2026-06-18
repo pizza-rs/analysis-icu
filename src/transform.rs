@@ -90,19 +90,19 @@ impl IcuTransformFilter {
         match &self.transform {
             IcuTransformId::Nfd => {
                 let normalizer = DecomposingNormalizer::new_nfd();
-                normalizer.normalize(input)
+                normalizer.normalize(input).into_owned()
             }
             IcuTransformId::Nfc => {
                 let normalizer = ComposingNormalizer::new_nfc();
-                normalizer.normalize(input)
+                normalizer.normalize(input).into_owned()
             }
             IcuTransformId::Nfkd => {
                 let normalizer = DecomposingNormalizer::new_nfkd();
-                normalizer.normalize(input)
+                normalizer.normalize(input).into_owned()
             }
             IcuTransformId::Nfkc => {
                 let normalizer = ComposingNormalizer::new_nfkc();
-                normalizer.normalize(input)
+                normalizer.normalize(input).into_owned()
             }
             IcuTransformId::LatinAscii => {
                 // NFD decompose then strip combining marks
