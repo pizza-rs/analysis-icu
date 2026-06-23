@@ -12,9 +12,9 @@ use crate::{IcuCollationFilter, IcuFoldingFilter, IcuNormalizationFilter, IcuNor
 /// - Tokenizer: `icu_tokenizer`
 /// - Token Filters: `icu_folding`, `icu_normalizer`, `icu_collation`, `icu_transform`
 pub fn register_all(factory: &mut AnalysisFactory) {
-    factory.register_tokenizer("icu_tokenizer", Box::new(IcuTokenizer::new()));
-    factory.register_token_filter("icu_folding", Box::new(IcuFoldingFilter::new()));
-    factory.register_token_filter("icu_normalizer", Box::new(IcuNormalizationFilter::new(IcuNormFilterMode::NfkcCasefold)));
-    factory.register_token_filter("icu_collation", Box::new(IcuCollationFilter::new("root")));
-    factory.register_token_filter("icu_transform", Box::new(IcuTransformFilter::new(IcuTransformId::AnyLatinAscii)));
+    factory.register_tokenizer_with("icu_tokenizer", || Box::new(IcuTokenizer::new()));
+    factory.register_token_filter_with("icu_folding", || Box::new(IcuFoldingFilter::new()));
+    factory.register_token_filter_with("icu_normalizer", || Box::new(IcuNormalizationFilter::new(IcuNormFilterMode::NfkcCasefold)));
+    factory.register_token_filter_with("icu_collation", || Box::new(IcuCollationFilter::new("root")));
+    factory.register_token_filter_with("icu_transform", || Box::new(IcuTransformFilter::new(IcuTransformId::AnyLatinAscii)));
 }
