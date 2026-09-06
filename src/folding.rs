@@ -8,6 +8,7 @@ use alloc::borrow::Cow;
 
 use icu_casemap::CaseMapper;
 use icu_normalizer::ComposingNormalizer;
+use icu_normalizer::DecomposingNormalizer;
 
 use pizza_engine::analysis::{Token, TokenFilter};
 
@@ -48,8 +49,14 @@ impl TokenFilter for IcuFoldingFilter {
         let case_mapper = CaseMapper::new();
         let folded = case_mapper.fold_string(&nfkc);
 
-        // Step 3: Remove combining diacritical marks (U+0300..U+036F)
-        let cleaned: String = folded
+        // Step 3: strip diacritics — decompose first (café → cafe´) so the
+        // combining marks actually exist to be filtered out, then drop them
+        // and recompose.
+        let nfd = DecomposingNormalizer::new_nfd();
+        let decomposed = nfd.normalize(&folded);
+
+        // Remove combining diacritical marks (U+0300..U+036F)
+        let cleaned: String = decomposed
             .chars()
             .filter(|&ch| {
                 let c = ch as u32;

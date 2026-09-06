@@ -260,6 +260,7 @@ fn katakana_char_to_latin(ch: char) -> String {
         'ッ' => "".into(),   // small tsu (gemination)
         'ァ' => "a".into(), 'ィ' => "i".into(), 'ゥ' => "u".into(),
         'ェ' => "e".into(), 'ォ' => "o".into(),
+        'ャ' => "ya".into(), 'ュ' => "yu".into(), 'ョ' => "yo".into(),
         _ => {
             let mut s = String::new();
             s.push(ch);

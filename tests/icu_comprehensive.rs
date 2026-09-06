@@ -7,7 +7,7 @@ use pizza_engine::analysis::{AnalysisFactory, Normalizer, Token, TokenFilter, To
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-fn terms(tokens: &[Token<'_>]) -> Vec<&str> {
+fn terms<'a>(tokens: &'a [Token<'a>]) -> Vec<&'a str> {
     tokens.iter().map(|t| t.term.as_ref()).collect()
 }
 
