@@ -3,7 +3,11 @@
 use std::borrow::Cow;
 
 use pizza_analysis_icu::*;
-use pizza_engine::analysis::{AnalysisFactory, Normalizer, Token, TokenFilter, Tokenizer};
+use pizza_engine::analysis::AnalysisFactory;
+use pizza_engine::analysis::Normalizer;
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::TokenFilter;
+use pizza_engine::analysis::Tokenizer;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -39,7 +43,10 @@ mod icu_tokenizer {
     fn english_multiple_words() {
         let tok = IcuTokenizer::new();
         let tokens = tok.tokenize("The quick brown fox jumps");
-        assert_eq!(terms(&tokens), vec!["The", "quick", "brown", "fox", "jumps"]);
+        assert_eq!(
+            terms(&tokens),
+            vec!["The", "quick", "brown", "fox", "jumps"]
+        );
     }
 
     #[test]
@@ -104,7 +111,11 @@ mod icu_tokenizer {
         let tok = IcuTokenizer::new();
         let tokens = tok.tokenize("مرحبا بالعالم");
         let t = terms(&tokens);
-        assert!(t.len() >= 2, "Arabic should produce at least 2 tokens: {:?}", t);
+        assert!(
+            t.len() >= 2,
+            "Arabic should produce at least 2 tokens: {:?}",
+            t
+        );
     }
 
     #[test]
@@ -592,9 +603,7 @@ mod icu_transform {
 
     #[test]
     fn custom_rules_chained() {
-        let rules = vec![
-            ("alpha".to_string(), "beta".to_string()),
-        ];
+        let rules = vec![("alpha".to_string(), "beta".to_string())];
         let filter = IcuTransformFilter::new(IcuTransformId::Custom(rules));
         assert_eq!(apply_filter(&filter, "alpha-test"), "beta-test");
     }
@@ -662,7 +671,11 @@ mod icu_transform {
     fn any_latin_ascii_pipeline() {
         let filter = IcuTransformFilter::new(IcuTransformId::AnyLatinAscii);
         let result = apply_filter(&filter, "Москва");
-        assert!(result.is_ascii(), "AnyLatinAscii should produce ASCII: {}", result);
+        assert!(
+            result.is_ascii(),
+            "AnyLatinAscii should produce ASCII: {}",
+            result
+        );
     }
 
     // --- Identity for ASCII ---

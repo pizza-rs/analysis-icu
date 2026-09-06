@@ -20,7 +20,8 @@ use alloc::vec::Vec;
 use icu_normalizer::ComposingNormalizer;
 use icu_normalizer::DecomposingNormalizer;
 
-use pizza_engine::analysis::{Token, TokenFilter};
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::TokenFilter;
 
 /// Built-in transform identifiers modeled after ICU's transform IDs.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -133,27 +134,30 @@ impl IcuTransformFilter {
             }
             IcuTransformId::AnyLatinAscii => {
                 // AnyLatin then LatinAscii
-                let latin = IcuTransformFilter::new(IcuTransformId::AnyLatin).apply_transform(input);
+                let latin =
+                    IcuTransformFilter::new(IcuTransformId::AnyLatin).apply_transform(input);
                 IcuTransformFilter::new(IcuTransformId::LatinAscii).apply_transform(&latin)
             }
-            IcuTransformId::KatakanaHiragana => {
-                input.chars().map(|ch| {
+            IcuTransformId::KatakanaHiragana => input
+                .chars()
+                .map(|ch| {
                     if is_katakana(ch) {
                         katakana_to_hiragana_char(ch)
                     } else {
                         ch
                     }
-                }).collect()
-            }
-            IcuTransformId::HiraganaKatakana => {
-                input.chars().map(|ch| {
+                })
+                .collect(),
+            IcuTransformId::HiraganaKatakana => input
+                .chars()
+                .map(|ch| {
                     if is_hiragana(ch) {
                         hiragana_to_katakana_char(ch)
                     } else {
                         ch
                     }
-                }).collect()
-            }
+                })
+                .collect(),
             IcuTransformId::FullwidthHalfwidth => {
                 input.chars().map(fullwidth_to_halfwidth).collect()
             }
@@ -228,39 +232,87 @@ fn hiragana_to_katakana_char(ch: char) -> char {
 /// Best-effort single katakana → Latin transliteration.
 fn katakana_char_to_latin(ch: char) -> String {
     match ch {
-        'ア' => "a".into(), 'イ' => "i".into(), 'ウ' => "u".into(),
-        'エ' => "e".into(), 'オ' => "o".into(),
-        'カ' => "ka".into(), 'キ' => "ki".into(), 'ク' => "ku".into(),
-        'ケ' => "ke".into(), 'コ' => "ko".into(),
-        'サ' => "sa".into(), 'シ' => "shi".into(), 'ス' => "su".into(),
-        'セ' => "se".into(), 'ソ' => "so".into(),
-        'タ' => "ta".into(), 'チ' => "chi".into(), 'ツ' => "tsu".into(),
-        'テ' => "te".into(), 'ト' => "to".into(),
-        'ナ' => "na".into(), 'ニ' => "ni".into(), 'ヌ' => "nu".into(),
-        'ネ' => "ne".into(), 'ノ' => "no".into(),
-        'ハ' => "ha".into(), 'ヒ' => "hi".into(), 'フ' => "fu".into(),
-        'ヘ' => "he".into(), 'ホ' => "ho".into(),
-        'マ' => "ma".into(), 'ミ' => "mi".into(), 'ム' => "mu".into(),
-        'メ' => "me".into(), 'モ' => "mo".into(),
-        'ヤ' => "ya".into(), 'ユ' => "yu".into(), 'ヨ' => "yo".into(),
-        'ラ' => "ra".into(), 'リ' => "ri".into(), 'ル' => "ru".into(),
-        'レ' => "re".into(), 'ロ' => "ro".into(),
-        'ワ' => "wa".into(), 'ヲ' => "wo".into(), 'ン' => "n".into(),
-        'ガ' => "ga".into(), 'ギ' => "gi".into(), 'グ' => "gu".into(),
-        'ゲ' => "ge".into(), 'ゴ' => "go".into(),
-        'ザ' => "za".into(), 'ジ' => "ji".into(), 'ズ' => "zu".into(),
-        'ゼ' => "ze".into(), 'ゾ' => "zo".into(),
-        'ダ' => "da".into(), 'ヂ' => "di".into(), 'ヅ' => "du".into(),
-        'デ' => "de".into(), 'ド' => "do".into(),
-        'バ' => "ba".into(), 'ビ' => "bi".into(), 'ブ' => "bu".into(),
-        'ベ' => "be".into(), 'ボ' => "bo".into(),
-        'パ' => "pa".into(), 'ピ' => "pi".into(), 'プ' => "pu".into(),
-        'ペ' => "pe".into(), 'ポ' => "po".into(),
-        'ー' => "".into(),   // long vowel mark
-        'ッ' => "".into(),   // small tsu (gemination)
-        'ァ' => "a".into(), 'ィ' => "i".into(), 'ゥ' => "u".into(),
-        'ェ' => "e".into(), 'ォ' => "o".into(),
-        'ャ' => "ya".into(), 'ュ' => "yu".into(), 'ョ' => "yo".into(),
+        'ア' => "a".into(),
+        'イ' => "i".into(),
+        'ウ' => "u".into(),
+        'エ' => "e".into(),
+        'オ' => "o".into(),
+        'カ' => "ka".into(),
+        'キ' => "ki".into(),
+        'ク' => "ku".into(),
+        'ケ' => "ke".into(),
+        'コ' => "ko".into(),
+        'サ' => "sa".into(),
+        'シ' => "shi".into(),
+        'ス' => "su".into(),
+        'セ' => "se".into(),
+        'ソ' => "so".into(),
+        'タ' => "ta".into(),
+        'チ' => "chi".into(),
+        'ツ' => "tsu".into(),
+        'テ' => "te".into(),
+        'ト' => "to".into(),
+        'ナ' => "na".into(),
+        'ニ' => "ni".into(),
+        'ヌ' => "nu".into(),
+        'ネ' => "ne".into(),
+        'ノ' => "no".into(),
+        'ハ' => "ha".into(),
+        'ヒ' => "hi".into(),
+        'フ' => "fu".into(),
+        'ヘ' => "he".into(),
+        'ホ' => "ho".into(),
+        'マ' => "ma".into(),
+        'ミ' => "mi".into(),
+        'ム' => "mu".into(),
+        'メ' => "me".into(),
+        'モ' => "mo".into(),
+        'ヤ' => "ya".into(),
+        'ユ' => "yu".into(),
+        'ヨ' => "yo".into(),
+        'ラ' => "ra".into(),
+        'リ' => "ri".into(),
+        'ル' => "ru".into(),
+        'レ' => "re".into(),
+        'ロ' => "ro".into(),
+        'ワ' => "wa".into(),
+        'ヲ' => "wo".into(),
+        'ン' => "n".into(),
+        'ガ' => "ga".into(),
+        'ギ' => "gi".into(),
+        'グ' => "gu".into(),
+        'ゲ' => "ge".into(),
+        'ゴ' => "go".into(),
+        'ザ' => "za".into(),
+        'ジ' => "ji".into(),
+        'ズ' => "zu".into(),
+        'ゼ' => "ze".into(),
+        'ゾ' => "zo".into(),
+        'ダ' => "da".into(),
+        'ヂ' => "di".into(),
+        'ヅ' => "du".into(),
+        'デ' => "de".into(),
+        'ド' => "do".into(),
+        'バ' => "ba".into(),
+        'ビ' => "bi".into(),
+        'ブ' => "bu".into(),
+        'ベ' => "be".into(),
+        'ボ' => "bo".into(),
+        'パ' => "pa".into(),
+        'ピ' => "pi".into(),
+        'プ' => "pu".into(),
+        'ペ' => "pe".into(),
+        'ポ' => "po".into(),
+        'ー' => "".into(), // long vowel mark
+        'ッ' => "".into(), // small tsu (gemination)
+        'ァ' => "a".into(),
+        'ィ' => "i".into(),
+        'ゥ' => "u".into(),
+        'ェ' => "e".into(),
+        'ォ' => "o".into(),
+        'ャ' => "ya".into(),
+        'ュ' => "yu".into(),
+        'ョ' => "yo".into(),
         _ => {
             let mut s = String::new();
             s.push(ch);
@@ -272,39 +324,72 @@ fn katakana_char_to_latin(ch: char) -> String {
 /// Best-effort Cyrillic → Latin transliteration (ISO 9 / scholarly).
 fn cyrillic_to_latin(ch: char) -> String {
     match ch {
-        'А' => "A".into(), 'а' => "a".into(),
-        'Б' => "B".into(), 'б' => "b".into(),
-        'В' => "V".into(), 'в' => "v".into(),
-        'Г' => "G".into(), 'г' => "g".into(),
-        'Д' => "D".into(), 'д' => "d".into(),
-        'Е' => "E".into(), 'е' => "e".into(),
-        'Ё' => "Yo".into(), 'ё' => "yo".into(),
-        'Ж' => "Zh".into(), 'ж' => "zh".into(),
-        'З' => "Z".into(), 'з' => "z".into(),
-        'И' => "I".into(), 'и' => "i".into(),
-        'Й' => "J".into(), 'й' => "j".into(),
-        'К' => "K".into(), 'к' => "k".into(),
-        'Л' => "L".into(), 'л' => "l".into(),
-        'М' => "M".into(), 'м' => "m".into(),
-        'Н' => "N".into(), 'н' => "n".into(),
-        'О' => "O".into(), 'о' => "o".into(),
-        'П' => "P".into(), 'п' => "p".into(),
-        'Р' => "R".into(), 'р' => "r".into(),
-        'С' => "S".into(), 'с' => "s".into(),
-        'Т' => "T".into(), 'т' => "t".into(),
-        'У' => "U".into(), 'у' => "u".into(),
-        'Ф' => "F".into(), 'ф' => "f".into(),
-        'Х' => "Kh".into(), 'х' => "kh".into(),
-        'Ц' => "Ts".into(), 'ц' => "ts".into(),
-        'Ч' => "Ch".into(), 'ч' => "ch".into(),
-        'Ш' => "Sh".into(), 'ш' => "sh".into(),
-        'Щ' => "Shch".into(), 'щ' => "shch".into(),
-        'Ъ' => "".into(), 'ъ' => "".into(),     // hard sign
-        'Ы' => "Y".into(), 'ы' => "y".into(),
-        'Ь' => "".into(), 'ь' => "".into(),     // soft sign
-        'Э' => "E".into(), 'э' => "e".into(),
-        'Ю' => "Yu".into(), 'ю' => "yu".into(),
-        'Я' => "Ya".into(), 'я' => "ya".into(),
+        'А' => "A".into(),
+        'а' => "a".into(),
+        'Б' => "B".into(),
+        'б' => "b".into(),
+        'В' => "V".into(),
+        'в' => "v".into(),
+        'Г' => "G".into(),
+        'г' => "g".into(),
+        'Д' => "D".into(),
+        'д' => "d".into(),
+        'Е' => "E".into(),
+        'е' => "e".into(),
+        'Ё' => "Yo".into(),
+        'ё' => "yo".into(),
+        'Ж' => "Zh".into(),
+        'ж' => "zh".into(),
+        'З' => "Z".into(),
+        'з' => "z".into(),
+        'И' => "I".into(),
+        'и' => "i".into(),
+        'Й' => "J".into(),
+        'й' => "j".into(),
+        'К' => "K".into(),
+        'к' => "k".into(),
+        'Л' => "L".into(),
+        'л' => "l".into(),
+        'М' => "M".into(),
+        'м' => "m".into(),
+        'Н' => "N".into(),
+        'н' => "n".into(),
+        'О' => "O".into(),
+        'о' => "o".into(),
+        'П' => "P".into(),
+        'п' => "p".into(),
+        'Р' => "R".into(),
+        'р' => "r".into(),
+        'С' => "S".into(),
+        'с' => "s".into(),
+        'Т' => "T".into(),
+        'т' => "t".into(),
+        'У' => "U".into(),
+        'у' => "u".into(),
+        'Ф' => "F".into(),
+        'ф' => "f".into(),
+        'Х' => "Kh".into(),
+        'х' => "kh".into(),
+        'Ц' => "Ts".into(),
+        'ц' => "ts".into(),
+        'Ч' => "Ch".into(),
+        'ч' => "ch".into(),
+        'Ш' => "Sh".into(),
+        'ш' => "sh".into(),
+        'Щ' => "Shch".into(),
+        'щ' => "shch".into(),
+        'Ъ' => "".into(),
+        'ъ' => "".into(), // hard sign
+        'Ы' => "Y".into(),
+        'ы' => "y".into(),
+        'Ь' => "".into(),
+        'ь' => "".into(), // soft sign
+        'Э' => "E".into(),
+        'э' => "e".into(),
+        'Ю' => "Yu".into(),
+        'ю' => "yu".into(),
+        'Я' => "Ya".into(),
+        'я' => "ya".into(),
         _ => {
             let mut s = String::new();
             s.push(ch);
@@ -345,9 +430,12 @@ mod tests {
         let mut token = Token::new(input, 0, input.len() as u32, 0);
         filter.filter(&mut token);
         assert_eq!(
-            token.term.as_ref(), expected,
+            token.term.as_ref(),
+            expected,
             "transform({:?}) = {:?}, expected {:?}",
-            input, token.term.as_ref(), expected
+            input,
+            token.term.as_ref(),
+            expected
         );
     }
 

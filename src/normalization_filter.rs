@@ -4,9 +4,11 @@
 
 use alloc::borrow::Cow;
 
-use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+use icu_normalizer::ComposingNormalizer;
+use icu_normalizer::DecomposingNormalizer;
 
-use pizza_engine::analysis::{Token, TokenFilter};
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::TokenFilter;
 
 /// Normalization mode for the per-token filter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

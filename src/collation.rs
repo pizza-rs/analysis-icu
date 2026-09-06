@@ -5,10 +5,12 @@
 
 use alloc::borrow::Cow;
 
-use icu_collator::{Collator, CollatorPreferences};
+use icu_collator::Collator;
+use icu_collator::CollatorPreferences;
 use icu_locale_core::locale;
 
-use pizza_engine::analysis::{Token, TokenFilter};
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::TokenFilter;
 
 /// Locale-aware collation sort key filter using ICU4X.
 ///

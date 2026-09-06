@@ -6,9 +6,11 @@
 
 use alloc::borrow::Cow;
 
-use icu_segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
+use icu_segmenter::options::WordBreakInvariantOptions;
+use icu_segmenter::WordSegmenter;
 
-use pizza_engine::analysis::{Token, Tokenizer};
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::Tokenizer;
 
 /// Unicode word segmentation tokenizer using ICU4X.
 ///
@@ -47,7 +49,10 @@ impl Tokenizer for IcuTokenizer {
             let segment = &text[start..end];
 
             // Skip whitespace-only and punctuation-only segments
-            if segment.chars().all(|ch| ch.is_whitespace() || ch.is_ascii_punctuation()) {
+            if segment
+                .chars()
+                .all(|ch| ch.is_whitespace() || ch.is_ascii_punctuation())
+            {
                 continue;
             }
 
@@ -108,7 +113,8 @@ fn unicode_category(ch: char) -> UnicodeCategory {
             UnicodeCategory::Punctuation
         } else if (0x2100..=0x214F).contains(&c)  // Letterlike Symbols
             || (0x2190..=0x21FF).contains(&c)  // Arrows
-            || (0x2200..=0x22FF).contains(&c)  // Mathematical Operators
+            || (0x2200..=0x22FF).contains(&c)
+        // Mathematical Operators
         {
             UnicodeCategory::Symbol
         } else {

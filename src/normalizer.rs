@@ -4,7 +4,8 @@
 //! full input text before tokenization.
 
 use alloc::borrow::Cow;
-use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+use icu_normalizer::ComposingNormalizer;
+use icu_normalizer::DecomposingNormalizer;
 
 use pizza_engine::analysis::Normalizer;
 

@@ -10,7 +10,8 @@ use icu_casemap::CaseMapper;
 use icu_normalizer::ComposingNormalizer;
 use icu_normalizer::DecomposingNormalizer;
 
-use pizza_engine::analysis::{Token, TokenFilter};
+use pizza_engine::analysis::Token;
+use pizza_engine::analysis::TokenFilter;
 
 /// Unicode case folding filter using ICU4X.
 ///

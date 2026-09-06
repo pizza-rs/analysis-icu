@@ -12,18 +12,21 @@
 //! - [`IcuFoldingFilter`] — Unicode case folding (accent removal + lowercasing)
 //! - [`IcuCollationFilter`] — Locale-aware sort key generation
 extern crate alloc;
-mod tokenizer;
-mod normalizer;
-mod normalization_filter;
-mod folding;
 mod collation;
+mod folding;
+mod normalization_filter;
+mod normalizer;
+mod tokenizer;
 mod transform;
 
-pub use tokenizer::IcuTokenizer;
-pub use normalizer::{IcuNormalizer, IcuNormMode};
-pub use normalization_filter::{IcuNormalizationFilter, IcuNormFilterMode};
-pub use folding::IcuFoldingFilter;
 pub use collation::IcuCollationFilter;
-pub use transform::{IcuTransformFilter, IcuTransformId};
+pub use folding::IcuFoldingFilter;
+pub use normalization_filter::IcuNormFilterMode;
+pub use normalization_filter::IcuNormalizationFilter;
+pub use normalizer::IcuNormMode;
+pub use normalizer::IcuNormalizer;
+pub use tokenizer::IcuTokenizer;
+pub use transform::IcuTransformFilter;
+pub use transform::IcuTransformId;
 pub mod register;
 pub use register::register_all;
